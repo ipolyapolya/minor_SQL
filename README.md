@@ -1,1 +1,1 @@
-# minor_SQLex
+# minor_SQL
