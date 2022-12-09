@@ -165,7 +165,80 @@ GROUP BY maker
 HAVING count(distinct model) >= 3
 
 
+### Задача 21
+https://www.sql-ex.ru/learn_exercises.php?LN=21
+
+SELECT maker , max(price)
+FROM pc 
+JOIN product p on pc.model= p.model  
+GROUP BY maker
 
 
+### Задача 22
+https://www.sql-ex.ru/learn_exercises.php?LN=22
+
+SELECT speed, avg(price)
+FROM PC 
+WHERE speed > 600
+GROUP BY speed
+
+### Задача 23
+https://www.sql-ex.ru/learn_exercises.php?LN=23
+
+SELECT distinct maker  
+FROM PC pc 
+JOIN Product on pc.model = product.model  
+WHERE pc.speed >= 750 and maker in (select maker from laptop join product on laptop.model = product.model where laptop.speed >= 750)
+
+
+### Задача 24
+https://www.sql-ex.ru/learn_exercises.php?LN=24
+
+SELECT distinct model, price FROM pc WHERE pc.price = (SELECT MAX(price) FROM pc)  
+UNION 
+SELECT distinct model, price FROM printer WHERE printer.price = (SELECT MAX(price) FROM printer)  
+) as t 
+WHERE t.price=(SELECT MAX(price) FROM ( 
+SELECT distinct price FROM laptop WHERE laptop.price = (SELECT MAX(price) FROM laptop)  
+UNION 
+SELECT distinct price FROM pc WHERE pc.price = (SELECT MAX(price) FROM pc)  
+UNION 
+SELECT distinct price FROM printer WHERE printer.price = (SELECT MAX(price) FROM printer)  
+) as t1 )
+
+
+### Задача 25
+https://www.sql-ex.ru/learn_exercises.php?LN=25
+
+SELECT distinct product.maker 
+FROM product 
+WHERE product.type='Printer'  
+INTERSECT 
+SELECT distinct product.maker 
+FROM product 
+JOIN pc on pc.model=product.model  
+WHERE product.type='PC' AND pc.ram=(SELECT MIN(ram) FROM pc)  
+AND pc.speed = (SELECT MAX(speed) FROM (SELECT distinct speed FROM pc 
+WHERE pc.ram=(SELECT MIN(ram) FROM pc)) as t)
+
+
+### Задача 26
+https://www.sql-ex.ru/learn_exercises.php?LN=26
+
+
+### Задача 27
+https://www.sql-ex.ru/learn_exercises.php?LN=27
+
+
+### Задача 28
+https://www.sql-ex.ru/learn_exercises.php?LN=28
+
+
+### Задача 29
+https://www.sql-ex.ru/learn_exercises.php?LN=29
+
+
+### Задача 30
+https://www.sql-ex.ru/learn_exercises.php?LN=30
 
 
