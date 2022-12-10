@@ -355,31 +355,82 @@ HAVING count(model) > 1 and count(distinct type) = 1
 ### Задача 41
 https://www.sql-ex.ru/learn_exercises.php?LN=41
 
+with D as
+(select model, price from PC
+union
+select model, price from Laptop
+union
+select model, price from Printer)
 
-
+SELECT distinct P.maker,
+CASE WHEN MAX(CASE WHEN D.price IS NULL THEN 1 ELSE 0 END) = 0 THEN
+MAX(D.price) END
+FROM Product P
+RIGHT JOIN D on P.model=D.model
+GROUP BY P.maker
 
 ### Задача 42
 https://www.sql-ex.ru/learn_exercises.php?LN=42
 
+SELECT ship, battle
+FROM outcomes
+WHERE result = 'sunk'
 
 ### Задача 43
 https://www.sql-ex.ru/learn_exercises.php?LN=43
 
+SELECT name 
+FROM battles 
+WHERE DATEPART(yy, date) not in (select DATEPART(yy, date) from battles 
+JOIN ships on DATEPART(yy, date)=launched)
 
 ### Задача 44
 https://www.sql-ex.ru/learn_exercises.php?LN=44
+
+SELECT name FROM ships WHERE name LIKE 'R%'   
+UNION   
+SELECT name FROM battles WHERE name LIKE 'R%'   
+UNION   
+SELECT ship FROM outcomes WHERE ship LIKE 'R%'
 
 
 ### Задача 45
 https://www.sql-ex.ru/learn_exercises.php?LN=45
 
+SELECT name FROM ships WHERE name LIKE '% % %'  
+UNION  
+SELECT ship FROM outcomes WHERE ship like '% % %'
 
 ### Задача 46
 https://www.sql-ex.ru/learn_exercises.php?LN=46
 
+SELECT sh.name, cl.displacement, cl.NumGuns
+FROM classes cl
+JOIN ships sh on cl.class = sh.class
+JOIN outcomes out on sh.name = out.ship
+WHERE out.battle = 'Guadalcanal'
+
 
 ### Задача 47
 https://www.sql-ex.ru/learn_exercises.php?LN=47
+
+with sh as (
+  select c.country, s.name from classes c join ships s on c.class=s.class
+  union
+  select c.country, o.ship from outcomes o join classes c on c.class=o.ship
+)
+, a as (
+  select
+    country, name
+    , case
+        when result='sunk' then 1
+        else 0
+      end as sunk
+  from sh left join outcomes o on o.ship=sh.name
+)
+select country from a
+group by country
+having count(distinct name)=sum(sunk)
 
 
 ### Задача 48
