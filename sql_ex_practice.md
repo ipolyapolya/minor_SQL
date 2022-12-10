@@ -225,20 +225,170 @@ WHERE pc.ram=(SELECT MIN(ram) FROM pc)) as t)
 ### Задача 26
 https://www.sql-ex.ru/learn_exercises.php?LN=26
 
+SELECT t1.c/t1.d FROM( SELECT SUM(t.a) as c, SUM(t.b) as d FROM(  
+SELECT SUM(pc.price) as a, COUNT(pc.code) as b FROM pc 
+INNER JOIN product ON pc.model=product.model WHERE product.maker='A'  
+UNION 
+SELECT SUM(laptop.price) as a, COUNT(laptop.code) as b FROM laptop 
+INNER JOIN product ON laptop.model=product.model WHERE product.maker='A') as t) as t1  
 
 ### Задача 27
 https://www.sql-ex.ru/learn_exercises.php?LN=27
 
+SELECT maker,avg(hd)  
+FROM product
+JOIN pc on product.model=pc.model   
+WHERE maker in(select maker from product where type='printer')  
+GROUP BY maker
 
 ### Задача 28
 https://www.sql-ex.ru/learn_exercises.php?LN=28
+
+SELECT count(maker)
+FROM product 
+WHERE maker in (select maker from product group by maker having count(model) = 1)
 
 
 ### Задача 29
 https://www.sql-ex.ru/learn_exercises.php?LN=29
 
+sELECT t.point, t.date, SUM(t.inc), sum(t.out) 
+FROM (select point, date, inc, null as out from Income_o  
+Union 
+SELECT point, date, null as inc, Outcome_o.out from Outcome_o) as t 
+GROUP BY t.point, t.date
+
 
 ### Задача 30
 https://www.sql-ex.ru/learn_exercises.php?LN=30
 
+SELECT point, date, SUM(sum_out), SUM(sum_inc) 
+FORM (select point, date, SUM(inc) as sum_inc, null as sum_out from Income Group by point, date  
+UNION 
+select point, date, null as sum_inc, SUM(out) as sum_out from Outcome Group by point, date ) as t  
+GROUP BY point, date 
+ORDER BY point
 
+### Задача 31
+https://www.sql-ex.ru/learn_exercises.php?LN=31
+
+SELECT class, country
+FROM classes
+WHERE bore >= 16
+
+### Задача 32
+https://www.sql-ex.ru/learn_exercises.php?LN=32
+
+SELECT country, cast(avg((power(bore,3)/2)) as numeric(6,2)) as weight 
+FROM (select country, classes.class, bore, name from classes left join ships on classes.class=ships.class  
+UNION ALL
+SELECT distinct country, class, bore, ship 
+FROM classes t1 
+LEFT JOIN outcomes t2 on t1.class=t2.ship  
+WHERE ship=class and ship not in (select name from ships) ) a  
+WHERE name!='null' 
+GROUP BY country
+
+### Задача 33
+https://www.sql-ex.ru/learn_exercises.php?LN=33
+
+SELECT ship
+FROM outcomes
+WHERE result = 'sunk' and battle = 'North Atlantic'
+
+### Задача 34
+https://www.sql-ex.ru/learn_exercises.php?LN=34
+
+SELECT name  
+FROM classes, ships 
+WHERE launched >= 1922 and displacement>35000 and type='bb' and ships.class = classes.class
+
+### Задача 35
+https://www.sql-ex.ru/learn_exercises.php?LN=35
+
+SELECT model, type FROM product 
+WHERE model NOT LIKE '%[^0-9]%' OR model NOT LIKE '%[^a-z]%'
+
+### Задача 36
+https://www.sql-ex.ru/learn_exercises.php?LN=36
+
+SELECT name  
+FEOM ships  
+WHERE class = name   
+UNION 
+SELECT ship as name 
+FROM classes, outcomes  
+WHERE classes.class = outcomes.ship
+
+### Задача 37
+https://www.sql-ex.ru/learn_exercises.php?LN=37
+
+SELECT class  
+FROM (select name,class from ships  
+UNION
+select class as name,class  from classes,outcomes  where classes.class=outcomes.ship) A   
+group by class  having count(A.name)=1
+
+### Задача 38
+https://www.sql-ex.ru/learn_exercises.php?LN=38
+
+SELECT distinct country  
+FROM classes  
+WHERE type='bb'   
+INTERSECT 
+SELECT distinct country  
+FROM classes  
+WHERE type='bc'
+
+### Задача 39
+https://www.sql-ex.ru/learn_exercises.php?LN=39
+
+
+### Задача 40
+https://www.sql-ex.ru/learn_exercises.php?LN=40
+
+SELECT maker, max(type) 
+FROM product 
+GROUP BY maker
+HAVING count(model) > 1 and count(distinct type) = 1
+
+### Задача 41
+https://www.sql-ex.ru/learn_exercises.php?LN=41
+
+
+
+
+### Задача 42
+https://www.sql-ex.ru/learn_exercises.php?LN=42
+
+
+### Задача 43
+https://www.sql-ex.ru/learn_exercises.php?LN=43
+
+
+### Задача 44
+https://www.sql-ex.ru/learn_exercises.php?LN=44
+
+
+### Задача 45
+https://www.sql-ex.ru/learn_exercises.php?LN=45
+
+
+### Задача 46
+https://www.sql-ex.ru/learn_exercises.php?LN=46
+
+
+### Задача 47
+https://www.sql-ex.ru/learn_exercises.php?LN=47
+
+
+### Задача 48
+https://www.sql-ex.ru/learn_exercises.php?LN=48
+
+
+### Задача 49
+https://www.sql-ex.ru/learn_exercises.php?LN=49
+
+
+### Задача 50
+https://www.sql-ex.ru/learn_exercises.php?LN=50
