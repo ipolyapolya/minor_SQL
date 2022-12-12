@@ -695,3 +695,101 @@ LEFT JOIN (select point, sum(out) as o
 ON A.point=B.point  
 </code></pre>
 
+### Задача 61
+https://www.sql-ex.ru/learn_exercises.php?LN=61
+
+<pre><code>
+SELECT (select sum(inc) from income_o) - (select sum(out) from outcome_o)
+</code></pre>
+
+### Задача 62
+https://www.sql-ex.ru/learn_exercises.php?LN=62
+
+<pre><code>
+SELECT  (select sum(inc) from income_o where '20010415' > date) - (select sum(out) from outcome_o where '20010415' > date)
+</code></pre>
+
+### Задача 63
+https://www.sql-ex.ru/learn_exercises.php?LN=63
+
+<pre><code>
+SELECT name 
+FROM Passenger 
+WHERE ID_psg in (select Left([ol],CHARINDEX ( ' ', ol)) from ( 
+                                                        Select CAST(concat(ID_psg,' ', place) AS VARCHAR(30)) as ol, trip_no as o, ID_psg as psg 
+                                                        from Pass_in_trip ) as lll 
+                                                        GROUP BY ol 
+                                                        HAVING count(o) > 1 )
+</code></pre>
+
+### Задача 64
+https://www.sql-ex.ru/learn_exercises.php?LN=64
+
+<pre><code>
+SELECT income.point, income.date, 'inc' as operation, sum(income.inc) 
+FROM income 
+LEFT JOIN outcome on income.point=outcome.point and income.date=outcome.date 
+WHERE outcome.date is null  
+GROUP BY income.point, income.date 
+UNION
+SELECT outcome.point, outcome.date, 'out' as operation, sum(outcome.out) 
+FROM income right join outcome on income.point=outcome.point and income.date=outcome.date 
+WHERE income.date is null 
+GROUP BY outcome.point, outcome.date 
+</code></pre>
+
+### Задача 65
+https://www.sql-ex.ru/learn_exercises.php?LN=65
+
+<pre><code>
+</code></pre>
+
+### Задача 66
+https://www.sql-ex.ru/learn_exercises.php?LN=66
+
+<pre><code>
+</code></pre>
+
+### Задача 67
+https://www.sql-ex.ru/learn_exercises.php?LN=67
+<pre><code>
+</code></pre>
+
+### Задача 60
+https://www.sql-ex.ru/learn_exercises.php?LN=60
+
+<pre><code>
+</code></pre>
+
+
+### Задача 68
+https://www.sql-ex.ru/learn_exercises.php?LN=68
+
+<pre><code>
+</code></pre>
+
+
+### Задача 69
+https://www.sql-ex.ru/learn_exercises.php?LN=69
+
+<pre><code>
+</code></pre>
+
+### Задача 70
+https://www.sql-ex.ru/learn_exercises.php?LN=70
+
+<pre><code>
+</code></pre>
+
+### Задача 71
+https://www.sql-ex.ru/learn_exercises.php?LN=61
+
+<pre><code>
+</code></pre>
+
+
+### Задача 72
+https://www.sql-ex.ru/learn_exercises.php?LN=72
+
+<pre><code>
+</code></pre>
