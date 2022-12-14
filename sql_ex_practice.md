@@ -134,7 +134,7 @@ WHERE pr.maker = 'A';
 https://www.sql-ex.ru/learn_exercises.php?LN=14
 
 <pre><code>
-SELECT classes.class , name,country 
+SELECT classes.class , name, country 
 FROM classes 
 JOIN ships on classes.class = ships.class  
 WHERE numguns >= 10;
@@ -147,7 +147,7 @@ https://www.sql-ex.ru/learn_exercises.php?LN=15
 SELECT hd  
 FROM pc 
 GROUP BY hd 
-HAVING count(model)>1; 
+HAVING count(model) > 1; 
 </code></pre>
 
 ### Задача 16
@@ -272,7 +272,7 @@ WHERE pc.ram=(SELECT MIN(ram) FROM pc)) as t)
 https://www.sql-ex.ru/learn_exercises.php?LN=26
 
 <pre><code>
-SELECT t1.c/t1.d FROM( SELECT SUM(t.a) as c, SUM(t.b) as d 
+SELECT t1.c/t1.d FROM (SELECT SUM(t.a) as c, SUM(t.b) as d 
 FROM (SELECT SUM(pc.price) as a, COUNT(pc.code) as b FROM pc 
 JOIN product ON pc.model=product.model WHERE product.maker='A'  
 UNION 
@@ -284,7 +284,7 @@ JOIN product ON laptop.model=product.model WHERE product.maker='A') as t) as t1
 https://www.sql-ex.ru/learn_exercises.php?LN=27
 
 <pre><code>
-SELECT maker,avg(hd)  
+SELECT maker, avg(hd)  
 FROM product
 JOIN pc on product.model=pc.model   
 WHERE maker in(select maker from product where type='printer')  `
@@ -306,8 +306,8 @@ https://www.sql-ex.ru/learn_exercises.php?LN=29
 <pre><code>
 SELECT t.point, t.date, SUM(t.inc), sum(t.out) 
 FROM (select point, date, inc, null as out from Income_o  
-UNION 
-SELECT point, date, null as inc, Outcome_o.out from Outcome_o) as t 
+      UNION 
+      selecr point, date, null as inc, Outcome_o.out from Outcome_o) as t 
 GROUP BY t.point, t.date 
 </code></pre>
 
@@ -318,8 +318,8 @@ https://www.sql-ex.ru/learn_exercises.php?LN=30
 <pre><code>
 SELECT point, date, SUM(sum_out), SUM(sum_inc) 
 FROM (select point, date, SUM(inc) as sum_inc, null as sum_out from Income Group by point, date  
-UNION 
-SELECT point, date, null as sum_inc, SUM(out) as sum_out from Outcome Group by point, date ) as t  
+      UNION 
+      select point, date, null as sum_inc, SUM(out) as sum_out from Outcome Group by point, date) as t  
 GROUP BY point, date 
 ORDER BY point 
 </code></pre>
@@ -503,19 +503,13 @@ https://www.sql-ex.ru/learn_exercises.php?LN=47
 <pre><code>
 with sh as (
     select c.country, s.name from classes c join ships s on c.class=s.class
-  union
-  select c.country, o.ship from outcomes o join classes c on c.class=o.ship
-)
-, a as (
-  select
-    country, name
-    , case
-        when result='sunk' then 1
-        else 0
-      end as sunk
-  from sh left join outcomes o on o.ship=sh.name
-)
-select country from a
+    union
+    select c.country, o.ship from outcomes o join classes c on c.class=o.ship),
+     
+      a as (select country, name, case when result='sunk' then 1 else 0 end as sunk
+      from sh left join outcomes o on o.ship=sh.name)
+select country 
+from a
 group by country
 having count(distinct name)=sum(sunk) `
 </code></pre>
@@ -569,11 +563,11 @@ SELECT name FROM (select name as name, displacement, numguns
                     join classes on outcomes.ship= classes.class) as d1 
                     join (select displacement, max(numGuns) as numguns 
    FROM (select displacement, numguns from ships join classes on ships.class = classes.class  
-   UNION 
-   SELECT displacement, numguns  
-   FROM outcomes 
-   JOIN classes on outcomes.ship= classes.class) as f 
-   GROUP BY displacement) as d2 on d1.displacement=d2.displacement and d1.numguns =d2.numguns
+         UNION 
+         SELECT displacement, numguns  
+         FROM outcomes 
+         JOIN classes on outcomes.ship= classes.class) as f 
+         GROUP BY displacement) as d2 on d1.displacement=d2.displacement and d1.numguns =d2.numguns
 </code></pre>
 
 ### Задача 52
@@ -742,6 +736,15 @@ GROUP BY outcome.point, outcome.date
 https://www.sql-ex.ru/learn_exercises.php?LN=65
 
 <pre><code>
+select row_number() over(order by maker) as num,
+       CASE WHEN mnum=1 THEN maker ELSE '' END as maker,
+       type
+from (select row_number() over(partition by maker order by maker, ord) as mnum, 
+      maker, type
+      from (select distinct maker, type,
+            CASE WHEN LOWER(type)='pc' then 1 WHEN LOWER(type)='laptop' then 2 ELSE 3 END as ord
+            from product) as mto
+      ) as mtn
 </code></pre>
 
 ### Задача 66
@@ -752,22 +755,35 @@ https://www.sql-ex.ru/learn_exercises.php?LN=66
 
 ### Задача 67
 https://www.sql-ex.ru/learn_exercises.php?LN=67
-<pre><code>
-</code></pre>
-
-### Задача 60
-https://www.sql-ex.ru/learn_exercises.php?LN=60
 
 <pre><code>
-</code></pre>
+SELECT count(qqq) as qty 
+FROM (select town_from as qqq, town_to, count(plane) as cp 
+      from Trip 
+      group by town_from, town_to 
+      having count(plane) >= all(select count(plane)  
+                                 from Trip 
+                                 group by town_from, town_to) ) as tab
 
+</code></pre>
 
 ### Задача 68
 https://www.sql-ex.ru/learn_exercises.php?LN=68
 
 <pre><code>
-</code></pre>
+with rc as (select count(*) as route_trips
+            from trip
+            group by
+            case when town_from > town_to
+            then town_from else town_to
+            end,
+            case when town_from < town_to
+            then town_from else town_to
+            end)
 
+select count(*) as route_count from rc
+where route_trips=(select max(route_trips) from rc)
+</code></pre>
 
 ### Задача 69
 https://www.sql-ex.ru/learn_exercises.php?LN=69
@@ -779,17 +795,91 @@ https://www.sql-ex.ru/learn_exercises.php?LN=69
 https://www.sql-ex.ru/learn_exercises.php?LN=70
 
 <pre><code>
+select distinct battle
+from (select class, name from ships
+    union
+    select ship, ship from outcomes
+    ) as sh
+join classes c on c.class=sh.class
+join outcomes o on o.ship=sh.name
+group by battle, country
+having count(sh.name) >= 3
 </code></pre>
 
 ### Задача 71
-https://www.sql-ex.ru/learn_exercises.php?LN=61
+https://www.sql-ex.ru/learn_exercises.php?LN=71
 
 <pre><code>
+select p.maker 
+from product p 
+where p.type='pc' 
+group by p.maker 
+having count(DISTINCT p.model) = (select count(distinct pc.model) 
+                                  from pc 
+                                  where pc.model in (select distinct pr.model from product pr where pr.maker=p.maker)) 
 </code></pre>
 
 
 ### Задача 72
-https://www.sql-ex.ru/learn_exercises.php?LN=72
+https://www.sql-ex.ru/learn_exercises.php?LN=62
 
 <pre><code>
+with q as (select pt.id_psg as id, count(pt.date) as trip_num
+           from pass_in_trip pt 
+           join trip t on pt.trip_no=t.trip_no
+           group by pt.id_psg
+           having max(t.id_comp)=min(t.id_comp))
+
+select name, trip_num
+from q 
+join Passenger p on q.id=p.id_psg
+where trip_num=(select max(trip_num) from q)
 </code></pre>
+
+### Задача 73
+https://www.sql-ex.ru/learn_exercises.php?LN=73
+
+<pre><code>
+select country, name as battle from classes, battles
+except
+select country, battle
+from (select class, name as ship_name from ships
+      union
+      select ship, ship from outcomes) as sh
+join Classes c on sh.class=c.class
+join Outcomes o on o.ship=sh.ship_name;
+</code></pre>
+
+### Задача 74
+https://www.sql-ex.ru/learn_exercises.php?LN=74
+
+<pre><code>
+select c.country, c.class 
+from classes c 
+where c.country like (case when  (select count(*) from classes c 
+                                   where c.country='Russia' 
+                                   group by c.country) is not null 
+                      then ('Russia') else ('%') end) 
+</code></pre>
+
+### Задача 75
+https://www.sql-ex.ru/learn_exercises.php?LN=75
+
+<pre><code>
+select maker, max(l.price) as laptop,
+              max(pc.price) as pc,
+              max(pr.price) as printer
+from laptop l 
+right join product p on l.model = p.model 
+left join pc on pc.model = p.model 
+left join printer pr on p.model = pr.model
+where maker in (select maker from product 
+                where model in (select model from pc where price is not null 
+                                union 
+                                select model from printer where price is not null 
+                                union 
+                                select model from laptop where price is not null)) 
+group by maker 
+order by maker;
+</code></pre>
+
